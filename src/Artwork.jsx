@@ -1,16 +1,17 @@
 
 export default function Artwork({ title, artist, year, medium, onEditClicked = f => f, onDeleteClicked = f => f }) {
     return (
-      <section>
-        <h1>{title}</h1>
-        <div>
-            <div>{artist}</div>
-            <div>{year}</div>
-            <div>{medium}</div>
-            <button onClick={() => onEditClicked(title)}>Edit</button>
-            <button onClick={() => onDeleteClicked(title)}>Delete</button>
-
+<section className="container">
+      <h1 className="title">{title}</h1>
+      <div className="info">
+        <div><strong>Artist:</strong> {artist}</div>
+        <div><strong>Year:</strong> {year}</div>
+        <div><strong>Medium:</strong> {medium}</div>
+        <div className="buttons">
+          <button className="edit" onClick={() => onEditClicked(title)}>Edit</button>
+          <button className="delete" onClick={() => onDeleteClicked(title)}>Delete</button>
         </div>
-      </section>
+      </div>
+    </section>
     )
 }

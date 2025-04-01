@@ -1,61 +1,73 @@
-const hardCodedArtworks = [
-    {
-      id: 1,
-      title: "Mona Lisa",
-      artist: "Leonardo da Vinci",
-      year: 1503,
-      medium: "Oil on canvas"
-    },
-    {
-      id: 2,
-      title: "Starry Night",
-      artist: "Vincent van Gogh",
-      year: 1889,
-      medium: "Oil on canvas"
-    },
-    {
-      id: 3,
-      title: "The Persistence of Memory",
-      artist: "Salvador Dalí",
-      year: 1931,
-      medium: "Oil on canvas"
-    }
-  ];
-  
-  export default class ArtworkAPI {
-    static fetchArtworks() {
-      return new Promise((resolve) => {
-        resolve(hardCodedArtworks);
-      });
-    }
-  
-    static addArtwork(artwork) {
-      return new Promise((resolve, _reject) => {
-        const newArtwork = { ...artwork, id: hardCodedArtworks.length + 1 };
-        hardCodedArtworks.push(newArtwork);
-        resolve(newArtwork);
-      });
-    }
-  
-    static updateArtwork(updatedArtwork) {
-      return new Promise((resolve, reject) => {
-        const index = hardCodedArtworks.findIndex(artwork => artwork.id == updatedArtwork.id);
-        if (index == -1) {
-          return reject(new Error("Artwork not found"));
-        }
-        hardCodedArtworks[index] = { ...hardCodedArtworks[index], ...updatedArtwork };
-        resolve(hardCodedArtworks[index]);
-      });
-    }
-  
-    static deleteArtwork(id) {
-      return new Promise((resolve, reject) => {
-        const index = hardCodedArtworks.findIndex(artwork => artwork.id == id);
-        if (index === -1) {
-          return reject(new Error("Artwork not found"));
-        }
-        resolve(hardCodedArtworks[index]);
-      });
-    }
+const apiURL = 'http://localhost:3001';
+
+export default class ArtworkAPI {
+
+  static fetchArtworks() {
+    return fetch(`${apiURL}/artworks`).then(response => {
+      return response.json();
+    });
   }
-  
+
+  static addArtwork(artwork) {
+    const options = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      body: JSON.stringify(artwork)
+    };
+
+    return fetch(`${apiURL}/artworks/`, options).then(async response => {
+      if (response.ok) {
+        console.log('Response was ok');
+        return response.json();
+      } else {
+        throw new Error(`Problem with POST: ${(await response.json()).message}`);
+      }
+    });
+  }
+
+  static updateArtwork(artwork) {
+    if (!artwork.pk) {
+      throw new Error('Artwork must have a primary key to update');
+    }
+
+    const options = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      body: JSON.stringify(artwork)
+    };
+
+    return fetch(`${apiURL}/artworks/${artwork.pk}`, options).then(async response => {
+      if (response.ok) {
+        console.log('Response was ok');
+        return response.json();
+      } else {
+        throw new Error(`Problem with POST: ${(await response.json()).message}`);
+      }
+    });
+  }
+
+  static deleteArtwork(id) {
+    const options = {
+        method: 'DELETE',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8'
+        }
+    };
+
+    return fetch(`${apiURL}/artworks/${id}`, options).then(async response => {
+        if (response.ok) {
+            console.log('Artwork deleted successfully');
+            return response.json();
+        } else {
+            throw new Error(`Problem with DELETE: ${(await response.json()).message}`);
+        }
+    });
+  }
+}

@@ -16,16 +16,56 @@ code {
   border: 1px solid black;
   padding: 7px;
   display: inline-block;
+  margin-bottom: 20px;
 }
 
 #list {
-  background-color: #AAAAAA;
-  padding: 1em;
-  border-radius: 20px;
+  background-color: #444;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 10px;
 }
 
-section {
-  padding: 0.5em;
-  border: solid black;
-  border-radius: 20px;
+.container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+.title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+section div div {
+  margin-bottom: 15px;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+.edit {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-right: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete {
+  background-color: #ff1100;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-right: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+

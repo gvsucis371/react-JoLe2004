@@ -12,7 +12,7 @@ function App() {
   const [artworkToEdit, setArtworkToEdit] = useState(defaultArtwork);
   const [message, setMessage] = useState('');
 
-  let fetchColors = () => {
+  let fetchArtworks = () => {
     setLoading(true);
     ArtworkAPI.fetchArtworks()
       .then((data) => {
@@ -24,14 +24,29 @@ function App() {
         setMessage(`Error loading artworks: ${error.message}`);
       });
   };
-  useEffect(fetchColors, []);
+  useEffect(fetchArtworks, []);
 
   const submit = (event) => {
     event.preventDefault();
+
+    const trimmedTitle = artworkToEdit.title.trim();
+    const trimmedArtist = artworkToEdit.artist.trim();
+    const trimmedMedium = artworkToEdit.medium.trim();
+    const year = Number(artworkToEdit.year);
+    if (!trimmedTitle || !trimmedArtist || !trimmedMedium) {
+      setMessage("All fields are required.");
+      return;
+    }
+    if (!year || year < 1000 || year > new Date().getFullYear()) {
+      setMessage("Please enter a valid year (1000-2025).");
+      return;
+    }
+    setMessage("");
     setLoading(true);
     if (editMode) {
       ArtworkAPI.updateArtwork(artworkToEdit)
         .then((updatedArtwork) => {
+          console.log(updatedArtwork)
           setArtworks(artworks.map(artwork => artwork.id === updatedArtwork.id ? updatedArtwork : artwork));
           setEditMode(false);
           setArtworkToEdit(defaultArtwork);
@@ -42,6 +57,7 @@ function App() {
           setLoading(false);
         });
     } else {
+      artworkToEdit.id = artworks.length
       ArtworkAPI.addArtwork(artworkToEdit)
         .then((newArtwork) => {
           setArtworks([newArtwork, ...artworks]);
@@ -69,8 +85,8 @@ function App() {
   const deleteArtwork = (id) => {
     setLoading(true);
     ArtworkAPI.deleteArtwork(id)
-      .then((deletedArtwork) => {
-        setArtworks(artworks.filter(artwork => artwork.id !== deletedArtwork.id));
+      .then(() => {
+        setArtworks(artworks.filter(artwork => artwork.id !== id));
         setLoading(false);
       })
       .catch((error) => {
@@ -82,9 +98,11 @@ function App() {
   return (
     <div style={{ margin: 50 }}>
       <h1>Artwork Gallery</h1>
+      {message ? <p style={{ color: "red" }}>{message}</p> : null}
+
       <AddArtworkForm editMode={editMode} artworkToEdit={artworkToEdit} onUpdate={(artwork) => setArtworkToEdit(artwork)} onSubmit={submit} onCancelEdit={cancelEdit}/>
       <div id="list">
-      <ArtworkList artworks={artworks} loading={loading} message={message} onEditArtwork={editArtwork} onDeleteArtwork={deleteArtwork}/>
+        <ArtworkList artworks={artworks} loading={loading} onEditArtwork={editArtwork} onDeleteArtwork={deleteArtwork}/>
       </div>
     </div>
   );
